@@ -1,6 +1,6 @@
 {
   "name": "ethercalc-client",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple client for Ethercalc collaborative spreadsheets",
   "main": "index.js",
   "license": "ECL-2.0",
