@@ -50,10 +50,10 @@ Ethercalc.prototype.createRoom = function(room, snapshot) {
         timeout: 10000
     };
     if (room) {
-        return this.instance.post(`/_/${room}`, qs.stringify({
+        return this.instance.post(`/_/${room}`, {
             room: room,
             snapshot: snapshot
-        }), timeout)
+        }, timeout)
         .then(response => {
             // If room ID was included, this will be an ethercalc command
             return response.data;
@@ -70,11 +70,11 @@ Ethercalc.prototype.createRoom = function(room, snapshot) {
         });
     } else {
         // If we have no room ID, just create a new room
-        return this.instance.post('/_', qs.stringify({
+        return this.instance.post('/_', {
             snapshot: snapshot
-        }), timeout)
+        }, timeout)
         .then(response => {
-            // Since there was no room ID, that will be returned here
+            // Since there was no ID, a new ID/URL for the room will be returned
             return response.data;
         })
         .catch(error => {
