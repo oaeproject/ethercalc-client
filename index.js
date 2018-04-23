@@ -28,6 +28,8 @@ Ethercalc.prototype.getRoom = function(room) {
     return this.instance.get(`/_/${room}`)
     .then(response => {
         // This returns the socialcalc snapshot for the room
+        // See https://github.com/marcelklehr/socialcalc/blob/master/js/socialcalc-3.js#L367
+        // for description of the format and acceptable values
         return response.data;
     })
     .catch(error => {
@@ -50,10 +52,10 @@ Ethercalc.prototype.createRoom = function(room, snapshot) {
         timeout: 10000
     };
     if (room) {
-        return this.instance.post(`/_/${room}`, {
+        return this.instance.post(`/_/${room}`, qs.stringify({
             room: room,
             snapshot: snapshot
-        }, timeout)
+        }), timeout)
         .then(response => {
             // If room ID was included, this will be an ethercalc command
             return response.data;
@@ -70,9 +72,9 @@ Ethercalc.prototype.createRoom = function(room, snapshot) {
         });
     } else {
         // If we have no room ID, just create a new room
-        return this.instance.post('/_', {
+        return this.instance.post('/_', qs.stringify({
             snapshot: snapshot
-        }, timeout)
+        }), timeout)
         .then(response => {
             // Since there was no ID, a new ID/URL for the room will be returned
             return response.data;
@@ -150,6 +152,7 @@ Ethercalc.prototype.createRoomFromCSVFile = function(path) {
 
 Ethercalc.prototype.deleteRoom = function(room) {
     return this.instance.delete(`/_/${room}`)
+    // If the response status is successful the room was deleted
     .then(response => {
         return true;
     })
