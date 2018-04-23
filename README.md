@@ -1,7 +1,7 @@
 # ethercalc-client
 A simple API client for Ethercalc collaborative spreadsheets.
 
-# Useage
+# Usage
 
 You need to have [Ethercalc](https://github.com/audreyt/ethercalc) up and running for this to be useful. Follow the instructions in that repository to set it up, then create a new client:
 
