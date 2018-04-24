@@ -17,9 +17,9 @@ const fs = require('fs');
 const qs = require('qs');
 
 // Use the default Ethercalc host & port if none are provided
-function Ethercalc(host = 'localhost', port = '8000') {
+function Ethercalc(host = 'localhost', port = '8000', protocol = 'http') {
     this.instance = axios.create({
-        baseURL: `http://${host}:${port}`,
+        baseURL: `${protocol}://${host}:${port}`,
         timeout: 2500
     });
 }
