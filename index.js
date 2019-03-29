@@ -19,7 +19,7 @@ import qs from 'qs';
 const DEFAULT_SNAPSHOT = '...';
 
 // Use the default Ethercalc host & port if none are provided
-export function Ethercalc(host = 'localhost', port = '8000', protocol = 'http', timeout = 2500) {
+function Ethercalc(host = 'localhost', port = '8000', protocol = 'http', timeout = 2500) {
   this.instance = axios.create({
     baseURL: `${protocol}://${host}:${port}`,
     timeout
@@ -338,3 +338,5 @@ Ethercalc.prototype.getHTML = function(room) {
       return error;
     });
 };
+
+export default Ethercalc;
