@@ -12,7 +12,37 @@
     "axios": "^0.18.0",
     "ethercalc": "^0.20170704.0"
   },
+  "devDependencies": {
+    "eslint": "latest",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "prettier": "latest",
+    "xo": "^0.24.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "xo": {
+    "prettier": true,
+    "extends": [
+      "prettier"
+    ],
+    "plugins": [
+      "prettier"
+    ],
+    "rules": {
+      "import/no-extraneous-dependencies": "off",
+      "max-params": "off",
+      "max-nested-callbacks": "off",
+      "prettier/prettier": "error",
+      "no-use-before-define": "off",
+      "import/no-unresolved": [
+        2,
+        {
+          "commonjs": true,
+          "amd": true
+        }
+      ]
+    }
   }
 }
