@@ -16,7 +16,7 @@ import fs from 'fs';
 import axios from 'axios';
 import qs from 'qs';
 
-const DEFAULT_SNAPSHOT = '...';
+const DEFAULT_SNAPSHOT = '';
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8000;
 const DEFAULT_PROTOCOL = 'http';
