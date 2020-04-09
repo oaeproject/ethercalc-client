@@ -16,7 +16,7 @@ import fs from 'fs';
 import axios from 'axios';
 import qs from 'qs';
 
-const DEFAULT_SNAPSHOT = '';
+const DEFAULT_SNAPSHOT = '...';
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8000;
 const DEFAULT_PROTOCOL = 'http';
@@ -94,14 +94,7 @@ Ethercalc.prototype.createRoom = async function(room, snapshot) {
   // If we have no room ID, just create a new room
   snapshot = snapshot || DEFAULT_SNAPSHOT;
   try {
-    response = await this.instance.post(
-      '/_',
-      qs.stringify({
-        snapshot,
-      }),
-      timeout,
-    );
-
+    response = await this.instance.post('/_', { snapshot }, timeout);
     return response.data;
   } catch (error) {
     if (error.response) {
