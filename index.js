@@ -16,7 +16,7 @@ import fs from 'fs';
 import axios from 'axios';
 import qs from 'qs';
 
-const DEFAULT_SNAPSHOT = '';
+const DEFAULT_SNAPSHOT = '...';
 const DEFAULT_HOST = 'localhost';
 const DEFAULT_PORT = 8000;
 const DEFAULT_PROTOCOL = 'http';
@@ -27,15 +27,10 @@ const XLSX = 'xlsx';
 const CSV = 'csv';
 
 // Use the default Ethercalc host & port if none are provided
-function Ethercalc(
-  host = DEFAULT_HOST,
-  port = DEFAULT_PORT,
-  protocol = DEFAULT_PROTOCOL,
-  timeout = DEFAULT_TIMEOUT,
-) {
+function Ethercalc(host = DEFAULT_HOST, port = DEFAULT_PORT, protocol = DEFAULT_PROTOCOL, timeout = DEFAULT_TIMEOUT) {
   this.instance = axios.create({
     baseURL: `${protocol}://${host}:${port}`,
-    timeout,
+    timeout
   });
 }
 
@@ -51,7 +46,7 @@ Ethercalc.prototype.getRoom = async function(room) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -63,7 +58,7 @@ Ethercalc.prototype.getRoom = async function(room) {
 Ethercalc.prototype.createRoom = async function(room, snapshot) {
   // Creating a room might take a bit longer so increase timeout
   const timeout = {
-    timeout: 10000,
+    timeout: 10000
   };
   let response = null;
 
@@ -73,9 +68,9 @@ Ethercalc.prototype.createRoom = async function(room, snapshot) {
         `/_/${room}`,
         qs.stringify({
           room,
-          snapshot,
+          snapshot
         }),
-        timeout,
+        timeout
       );
       return response.data;
       // If room ID was included, this will be an ethercalc command
@@ -83,7 +78,7 @@ Ethercalc.prototype.createRoom = async function(room, snapshot) {
       if (error.response) {
         return {
           status: error.response.status,
-          message: error.response.statusText,
+          message: error.response.statusText
         };
       }
 
@@ -94,20 +89,13 @@ Ethercalc.prototype.createRoom = async function(room, snapshot) {
   // If we have no room ID, just create a new room
   snapshot = snapshot || DEFAULT_SNAPSHOT;
   try {
-    response = await this.instance.post(
-      '/_',
-      qs.stringify({
-        snapshot,
-      }),
-      timeout,
-    );
-
+    response = await this.instance.post('/_', { snapshot }, timeout);
     return response.data;
   } catch (error) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -117,38 +105,33 @@ Ethercalc.prototype.createRoom = async function(room, snapshot) {
 
 Ethercalc.prototype.overwrite = async function(room, snapshot, type) {
   const conf = {
-    headers: {},
+    headers: {}
   };
 
   if (type === SOCIALCALC) {
     conf.headers = {
-      'Content-Type': 'text/x-socialcalc',
+      'Content-Type': 'text/x-socialcalc'
     };
   } else if (type === XLSX) {
     conf.headers = {
-      'Content-Type':
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     };
   } else if (type === CSV) {
     conf.headers = {
-      'Content-Type': 'text/csv',
+      'Content-Type': 'text/csv'
     };
   } else {
     return new Error('Format must be one of socialcalc, xlsx or csv!');
   }
 
   try {
-    const response = await this.instance.put(
-      `/_/${room}`,
-      Buffer.from(snapshot),
-      conf,
-    );
+    const response = await this.instance.put(`/_/${room}`, Buffer.from(snapshot), conf);
     return response.data;
   } catch (error) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -158,22 +141,18 @@ Ethercalc.prototype.overwrite = async function(room, snapshot, type) {
 
 Ethercalc.prototype.createRoomFromCSVFile = async function(path) {
   try {
-    const response = await this.instance.post(
-      '/_/',
-      fs.createReadStream(path),
-      {
-        headers: {
-          // Content type is csv
-          'Content-Type': 'text/csv',
-        },
-      },
-    );
+    const response = await this.instance.post('/_/', fs.createReadStream(path), {
+      headers: {
+        // Content type is csv
+        'Content-Type': 'text/csv'
+      }
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -190,7 +169,7 @@ Ethercalc.prototype.deleteRoom = async function(room) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -202,7 +181,7 @@ Ethercalc.prototype.roomExists = async function(room) {
   try {
     const response = await this.instance.get(`/_exists/${room}`);
     if (response) return response.data;
-  } catch (error) {
+  } catch /* ( error ) */ {
     return false;
   }
 };
@@ -210,10 +189,7 @@ Ethercalc.prototype.roomExists = async function(room) {
 Ethercalc.prototype.exportRoom = async function(room, type) {
   type = type.toLowerCase();
   // Default to csv if type is not defined or is invalid
-  type =
-    type === 'csv.json' || type === XLSX || type === 'md' || type === 'html'
-      ? type
-      : CSV;
+  type = type === 'csv.json' || type === XLSX || type === 'md' || type === 'html' ? type : CSV;
 
   try {
     const response = await this.instance.get(`/_/${room}/${type}`);
@@ -222,7 +198,7 @@ Ethercalc.prototype.exportRoom = async function(room, type) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -238,7 +214,7 @@ Ethercalc.prototype.listRooms = async function() {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -252,16 +228,13 @@ Ethercalc.prototype.postCommand = async function(room, command) {
   // text t test` (action `set` coordinate `A1/A2` type `value n/text t` value
   // `1/test`)
   try {
-    const response = await this.instance.post(
-      `/_/${room}`,
-      qs.stringify({command}),
-    );
+    const response = await this.instance.post(`/_/${room}`, qs.stringify({ command }));
     return response.data;
   } catch (error) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -271,21 +244,17 @@ Ethercalc.prototype.postCommand = async function(room, command) {
 
 Ethercalc.prototype.appendRowsFromCSVFile = async function(room, path) {
   try {
-    const response = await this.instance.post(
-      `/_/${room}`,
-      fs.createReadStream(path),
-      {
-        headers: {
-          'Content-Type': 'text/csv',
-        },
-      },
-    );
+    const response = await this.instance.post(`/_/${room}`, fs.createReadStream(path), {
+      headers: {
+        'Content-Type': 'text/csv'
+      }
+    });
     return response.data;
   } catch (error) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -301,7 +270,7 @@ Ethercalc.prototype.getCells = async function(room) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -317,7 +286,7 @@ Ethercalc.prototype.getCellValue = async function(room, coord) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -333,7 +302,7 @@ Ethercalc.prototype.getHTML = async function(room) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -349,7 +318,7 @@ Ethercalc.prototype.getCSV = async function(room) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
@@ -365,7 +334,7 @@ Ethercalc.prototype.getJSON = async function(room) {
     if (error.response) {
       return {
         status: error.response.status,
-        message: error.response.statusText,
+        message: error.response.statusText
       };
     }
 
